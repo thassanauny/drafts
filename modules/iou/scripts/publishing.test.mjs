@@ -34,6 +34,24 @@ for (const [name, settings] of [
   });
 }
 
+for (const key of ['sb_secret_private', `header.${Buffer.from(JSON.stringify({ role: 'service_role' })).toString('base64url')}.signature`]) {
+  test('production build rejects private keys before creating output: ' + key.split('.')[0], (t) => {
+    const directory = fileURLToPath(new URL('../', import.meta.url));
+    const temporary = mkdtempSync(join(tmpdir(), 'iou-private-key-build-'));
+    t.after(() => rmSync(temporary, { recursive: true, force: true }));
+    const output = join(temporary, 'dist');
+    const result = spawnSync(process.execPath, [join(directory, 'node_modules/vite/bin/vite.js'), 'build', '--outDir', output], {
+      cwd: directory, encoding: 'utf8', timeout: 15000,
+      env: { ...process.env, VITEST: 'true', VITE_SUPABASE_URL: 'https://test.supabase.co', VITE_SUPABASE_ANON_KEY: key },
+    });
+    assert.ifError(result.error);
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /public Supabase publishable or anon key/);
+    assert.ok(!result.stderr.includes(key), 'Error messages must not echo configured keys');
+    assert.equal(existsSync(output), false, 'Private keys must never reach generated output');
+  });
+}
+
 function fixture(t) {
   const directory = mkdtempSync(join(tmpdir(), 'iou-publishing-'));
   t.after(() => rmSync(directory, { recursive: true, force: true }));

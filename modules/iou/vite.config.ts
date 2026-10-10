@@ -6,6 +6,16 @@ import { loadEnv, type Plugin } from 'vite'
 import { defineConfig } from 'vitest/config'
 import { VitePWA } from 'vite-plugin-pwa'
 
+function isPublicSupabaseKey(key: string): boolean {
+  if (/^sb_publishable_[A-Za-z0-9_-]+$/.test(key)) return true
+  try {
+    const pieces = key.split('.')
+    return pieces.length === 3 && JSON.parse(Buffer.from(pieces[1], 'base64url').toString()).role === 'anon'
+  } catch {
+    return false
+  }
+}
+
 export default defineConfig(({ mode, command }) => {
   const testing = process.env.VITEST === 'true' && mode === 'test' && command !== 'build'
   const shared = loadEnv(mode, resolve(process.cwd(), '../../publishing'), 'VITE_')
@@ -18,6 +28,9 @@ export default defineConfig(({ mode, command }) => {
     : env.VITE_SUPABASE_ANON_KEY?.trim() || shared.VITE_SUPABASE_ANON_KEY?.trim() || ''
   if (command === 'build' && (!supabaseUrl || !supabaseKey)) {
     throw new Error("iou production builds require VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY. Set both in the app's .env.local, shared ../../publishing/.env.local, or build environment before publishing.")
+  }
+  if (!testing && supabaseKey && !isPublicSupabaseKey(supabaseKey)) {
+    throw new Error('iou requires a public Supabase publishable or anon key. Secret and service_role keys cannot be exposed by this app.')
   }
   const cloudBuild: Plugin = {
     name: 'iou-cloud-build',

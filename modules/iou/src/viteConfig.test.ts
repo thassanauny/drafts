@@ -42,6 +42,32 @@ describe('iou shared publishing configuration', () => {
     })
   })
 
+  it('accepts legacy anon keys and rejects private or malformed keys from every source', () => {
+    const jwt = (role: string) => `header.${Buffer.from(JSON.stringify({ role })).toString('base64url')}.signature`
+    for (const key of ['sb_publishable_public', jwt('anon')]) {
+      vi.stubEnv('VITE_SUPABASE_URL', 'https://example.supabase.co')
+      vi.stubEnv('VITE_SUPABASE_ANON_KEY', key)
+      expect(definitions()).toMatchObject({ 'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(key) })
+    }
+    for (const source of ['shared', 'app', 'process']) {
+      for (const key of ['sb_secret_private', jwt('service_role'), jwt('authenticated'), 'invalid', 'header.not-json.signature']) {
+        vi.stubEnv('VITE_SUPABASE_URL', undefined)
+        vi.stubEnv('VITE_SUPABASE_ANON_KEY', undefined)
+        write(publishingDirectory, '.env.local', sharedValues)
+        write(appDirectory, '.env.local', '')
+        if (source === 'process') vi.stubEnv('VITE_SUPABASE_ANON_KEY', key)
+        else write(source === 'shared' ? publishingDirectory : appDirectory, '.env.local', `VITE_SUPABASE_URL=https://example.supabase.co\nVITE_SUPABASE_ANON_KEY=${key}\n`)
+        for (const options of [
+          { mode: 'production', command: 'build' },
+          { mode: 'development', command: 'serve' },
+          { mode: 'test', command: 'build' },
+        ] as const) {
+          expect(() => configure(options)).toThrow(/public Supabase publishable or anon key/)
+        }
+      }
+    }
+  })
+
   it('prefers app values per key and falls back for blank app values', () => {
     write(publishingDirectory, '.env.local', sharedValues)
     write(appDirectory, '.env.local', 'VITE_SUPABASE_URL= https://local.supabase.co \nVITE_SUPABASE_ANON_KEY=   \n')
