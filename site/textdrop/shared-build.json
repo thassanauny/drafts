@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "app": "textdrop",
+  "version": "1.0.1",
+  "base": "./",
+  "cloudConfigured": true,
+  "publicConfig": {
+    "urlSha256": "930628fe59c5881aadda87f832b36a7a0587a073616cf12498aec176d83d5dca",
+    "keySha256": "9be4d794a622d10707dcf95180f36773a506c56fd4ea29951df947f8c17eb5bf",
+    "keyKind": "publishable"
+  },
+  "scripts": {
+    "assets/index-v9rCQmOw.js": "5b254218e3fa7b1e61bbb40c3b5f187fdf90c7aa49a42fd51c1c76686854bd87"
+  }
+}

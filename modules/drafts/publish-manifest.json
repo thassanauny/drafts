@@ -1,0 +1,16 @@
+{
+  "app": "drafts",
+  "version": "1.0.6",
+  "chrome": {
+    "version": "1.0.6",
+    "url": "https://chromewebstore.google.com/detail/drafts/gapbkcacdkhdmcgnldfbjohdeagiabhd"
+  },
+  "site": "site/drafts",
+  "files": {
+    ".nojekyll": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "assets/drafts-icon.png": "0ddf38b4ca2bed16edc6c5c3f65fbd37fe3562deebbaca944c5b34dafdc0608d",
+    "assets/drafts-screenshot.png": "9aeb713895926cd9a4b128c1a6bbeb64b84471f3bf03cda10b40d03f97df9543",
+    "index.html": "f85099c0f98217e13abd79bac7813ea80cc53e901e520d99c702cc0728b9825f",
+    "styles.css": "eaabd3eeafec6b52701f5c01093dd773371a00c433525d1c742efa7133bae504"
+  }
+}

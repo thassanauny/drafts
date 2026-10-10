@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "app": "pinboard",
+  "version": "1.0.1",
+  "base": "./",
+  "cloudConfigured": true,
+  "publicConfig": {
+    "urlSha256": "930628fe59c5881aadda87f832b36a7a0587a073616cf12498aec176d83d5dca",
+    "keySha256": "9be4d794a622d10707dcf95180f36773a506c56fd4ea29951df947f8c17eb5bf",
+    "keyKind": "publishable"
+  },
+  "scripts": {
+    "assets/index-1WzGrvV7.js": "e55d132328b449e9f7d998060d4963b71622a330c01d99def14891d32dd63d97"
+  }
+}
